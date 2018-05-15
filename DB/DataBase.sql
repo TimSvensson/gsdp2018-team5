@@ -44,7 +44,7 @@ CREATE TABLE `ev3_robot` (
 
 /* Create a Trigger To Auto Increment The JOB_ID After The Previous Job's Status Changes To Done */
 
-DROP TRIGGER IF EXISTS `job_id_trigger`
+DROP TRIGGER IF EXISTS `job_id_trigger`;
 
 DELIMITER $$
 CREATE TRIGGER `job_id_trigger` BEFORE INSERT ON `ev3_robot` FOR EACH ROW
