@@ -48,3 +48,30 @@
 * A minor code review will be employed before a pull request will be opened.
 
 * Finally the user can create a pull request via github, which will be approved by the project owner.
+
+---
+
+# SETUP A BLUETOOTH PERSONAL AREA NETWORK
+
+## REQUIREMENTS
+
+    * GNU/Linux OS - (Debian, Fedora, LinuxMint, Ubuntu)
+    * Python3
+
+**USE THE setupBtPan.py SCRIPT**
+
+```bash
+    cd ./EV3
+```
+
+**MAKE THE PYTHON SCRIPT EXECUTABLE**
+
+```bash
+    sudo chmod u+x ./setupBtPan.py
+```
+
+**RUN THE SCRIPT**
+
+```bash
+    ./setupBtPan.py
+```
