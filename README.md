@@ -45,7 +45,7 @@
     git push origin <NAME OF THE USER STORY>
 ```
 
-* A minor code review will be employed before a pull request will be opened.
+* A minor code review will be employed before a pull request can be opened.
 
 * Finally the user can create a pull request via github, which will be approved by the project owner.
 
