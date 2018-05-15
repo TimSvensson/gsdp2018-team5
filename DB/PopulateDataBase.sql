@@ -2,9 +2,9 @@
 
 /* Change To automated_warehouse_management */
 
-USE automated_warehouse_management;
+USE `automated_warehouse_management`;
 
-INSERT INTO storage_unit
+INSERT INTO `storage_unit`
 	(storage_unit_name, no_of_items, max_capacity) 
 VALUES
 	('A', 0, 1),
