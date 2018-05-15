@@ -1,18 +1,18 @@
 /* Create The Database */
 
-DROP DATABASE automated_warehouse_management;
+DROP DATABASE IF EXISTS `automated_warehouse_management`;
 
-CREATE DATABASE IF NOT EXISTS automated_warehouse_management;
+CREATE DATABASE `automated_warehouse_management`;
 
 /* Change To automated_warehouse_management Database */
 
-use automated_warehouse_management;
+use `automated_warehouse_management`;
 
 /* Create Tables */
 
-DROP TABLE storage_unit;
+DROP TABLE IF EXISTS `storage_unit`;
 
-CREATE TABLE storage_unit (
+CREATE TABLE `storage_unit` (
 		id INT NOT NULL AUTO_INCREMENT,
 		storage_unit_name CHAR(15) NOT NULL,
 		no_of_items INT NOT NULL,
@@ -20,9 +20,9 @@ CREATE TABLE storage_unit (
 		PRIMARY KEY(id)
 );
 
-DROP TABLE sensor_data;
+DROP TABLE IF EXISTS `sensor_data`;
 
-CREATE TABLE sensor_data (
+CREATE TABLE `sensor_data` (
 	id INT NOT NULL AUTO_INCREMENT,
 	time_stamp TIMESTAMP NOT NULL,
 	humidity float,
@@ -31,9 +31,9 @@ CREATE TABLE sensor_data (
 	PRIMARY KEY(id)
 );
 
-DROP TABLE ev3_robot;
+DROP TABLE IF EXISTS `ev3_robot`;
 
-CREATE TABLE ev3_robot (
+CREATE TABLE `ev3_robot` (
 	id INT NOT NULL AUTO_INCREMENT,
 	time_stamp TIMESTAMP NOT NULL,
 	job_id INT NOT NULL,
@@ -43,6 +43,8 @@ CREATE TABLE ev3_robot (
 );
 
 /* Create a Trigger To Auto Increment The JOB_ID After The Previous Job's Status Changes To Done */
+
+DROP TRIGGER IF EXISTS `job_id_trigger`
 
 DELIMITER $$
 CREATE TRIGGER `job_id_trigger` BEFORE INSERT ON `ev3_robot` FOR EACH ROW
