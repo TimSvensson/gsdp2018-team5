@@ -49,11 +49,3 @@ class MovementController(leftMotor, rightMotor):
         setNormal()
         self.leftMotor.run_forever(speed_sp=100)
         self.rightMotor.run_forever(speed_sp=20)
-
-
-    def pickUp(self):
-        self.middleMotor.polarity = "inversed" # this will make the motor rotates clock-wise, which means going down
-        self.middleMotor.run_forever(speed_sp=50) # speed 50 is pretty enough to lift package up
-        sleep(1.5) # wait until the robot lower its arm to drop the package.
-        self.middleMotor.stop() # stop rotates
-        self.middleMotor.reset() # reset the config
