@@ -21,6 +21,14 @@ class MovementController:
         self.leftMotor.polarity = "inversed"
         self.rightMotor.polarity = "inversed"
 
+    def setSpeed(self, speed):
+        self.leftMotor.run_forever(speed_sp=speed)
+        self.rightMotor.run_forever(speed_sp=speed)
+
+    def stop():
+        self.leftMotor.stop()
+        self.rightMotor.stop()
+
     #reset all the config
     def reset(self):
         self.leftMotor.reset()
@@ -28,24 +36,21 @@ class MovementController:
 
     #set robot to run forward with speed of 100
     def forward(self):
-        setNormal()
         self.leftMotor.run_forever(speed_sp=100)
         self.rightMotor.run_forever(speed_sp=100)
 
     #set robot to run backward with speed of 100
-    def backward(self):
-        setInverse()
-        self.leftMotor.run_forever(speed_sp=100)
-        self.rightMotor.run_forever(speed_sp=100)
+    # def backward(self):
+    #     setInverse()
+    #     self.leftMotor.run_forever(speed_sp=100)
+    #     self.rightMotor.run_forever(speed_sp=100)
 
     #set robot to turn left
     def turnLeft(self):
-        setNormal()
         self.leftMotor.run_forever(speed_sp=20)
         self.rightMotor.run_forever(speed_sp=100)
 
     #set robot to turn right
     def turnRight(self):
-        setNormal()
         self.leftMotor.run_forever(speed_sp=100)
         self.rightMotor.run_forever(speed_sp=20)
