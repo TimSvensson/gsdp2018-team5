@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from time import sleep
 
-class ArmController(middleMotor):
+class ArmController:
 
     def __init__(self, middleMotor):
         #set arm motor for ArmController

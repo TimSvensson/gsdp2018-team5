@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from time import sleep
 
-class MovementController(leftMotor, rightMotor):
+class MovementController:
 
     def __init__(self, leftMotor, rightMotor):
         #set wheel motor for MovementController
