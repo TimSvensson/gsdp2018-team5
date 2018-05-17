@@ -83,6 +83,12 @@ class RoutingController:
         self.end = end
         self.route = []
 
+    def setStart(self, start):
+        self.start = start
+
+    def setEnd(self, end):
+        self.end = end
+
     def resetRoute(self):
         self.route = []
 
@@ -94,9 +100,6 @@ class RoutingController:
         if (end == ''):
             end = self.end
 
-        # if (start == end):
-        #     print('Stay')
-        #     return [];
         tmpKey = ""
         tmpValue = ""
         found = 0
@@ -118,19 +121,9 @@ class RoutingController:
                         start = tmpValue
                         self.route.append(tmpKey)
                         break
-
-
-                    # return [];
-                    # self.findPath(start, value)
         return self.route
 
-            #     self.route.append(key)
-            #     print(value)
-            #     print(self.route)
-            #     self.findPath(start, end)
-
 routing = RoutingController('start', 'b')
-print(routing.findPath('c', 'a'))
-print(routing.findPath('c', 'b'))
-print(routing.findPath('c', 'd'))
-print(routing.findPath('d', 'a'))
+routing.setEnd('d')
+routing.setStart('end')
+print(routing.findPath())
