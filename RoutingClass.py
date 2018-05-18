@@ -122,8 +122,3 @@ class RoutingController:
                         self.route.append(tmpKey)
                         break
         return self.route
-
-routing = RoutingController('start', 'b')
-routing.setEnd('d')
-routing.setStart('end')
-print(routing.findPath())

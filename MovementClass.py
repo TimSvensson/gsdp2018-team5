@@ -25,7 +25,7 @@ class MovementController:
         self.leftMotor.run_forever(speed_sp=speed)
         self.rightMotor.run_forever(speed_sp=speed)
 
-    def stop():
+    def stop(self):
         self.leftMotor.stop()
         self.rightMotor.stop()
 
@@ -36,8 +36,8 @@ class MovementController:
 
     #set robot to run forward with speed of 100
     def forward(self):
-        self.leftMotor.run_forever(speed_sp=100)
-        self.rightMotor.run_forever(speed_sp=100)
+        self.leftMotor.run_forever(speed_sp=300)
+        self.rightMotor.run_forever(speed_sp=300)
 
     #set robot to run backward with speed of 100
     # def backward(self):
@@ -47,10 +47,10 @@ class MovementController:
 
     #set robot to turn left
     def turnLeft(self):
-        self.leftMotor.run_forever(speed_sp=20)
-        self.rightMotor.run_forever(speed_sp=100)
+        self.leftMotor.run_forever(speed_sp=50)
+        self.rightMotor.run_forever(speed_sp=300)
 
     #set robot to turn right
     def turnRight(self):
-        self.leftMotor.run_forever(speed_sp=100)
-        self.rightMotor.run_forever(speed_sp=20)
+        self.leftMotor.run_forever(speed_sp=300)
+        self.rightMotor.run_forever(speed_sp=50)

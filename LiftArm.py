@@ -6,7 +6,6 @@ def liftUp(lf):
     lf.run_forever(speed_sp=50)
     sleep(1.5)
     lf.stop()
-    lf.reset()
 
 
 def liftDown(lf):
