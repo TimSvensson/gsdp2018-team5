@@ -1,6 +1,6 @@
 work flow:
 ======
-First, connect the wires each component according to the method above, connect HC-05 Bluetooth to the server by using UART, configure on the computer (because sever is not finished by other team members, so we test in local), remember to check the COM port consistent with the COM port of python file, and run the python file, the server can receive the values of sensor.
+First, connect the wires each component, connect HC-05 Bluetooth to the server by using UART, configure on the computer (because sever is not finished by other team members, so we test in local), remember to check the COM port consistent with the COM port of python file, and run the python file, the server can receive the values of sensor.
 ![](http://ww1.sinaimg.cn/large/61446e99gy1frg5zn4s1hj20o10b4q4h.jpg)
 
 Then we can see the value of humidity and temperature on the terminal, and note that JSON file is success created.
