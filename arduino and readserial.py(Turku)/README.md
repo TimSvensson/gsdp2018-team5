@@ -18,4 +18,5 @@ Note:
 
 We totally send 5 bytes data from Arduino write to the serial, 0x00 is the start byte, second and third bytes are the value of humidity, while fourth and fifth bytes are the value of temperature.
 ![](http://ww1.sinaimg.cn/large/61446e99gy1frg67kfl8vj20o1093788.jpg)
+
 In python file, read from corresponding bytes for humidity and temperature, convert these values to integer, then transform to json format.
