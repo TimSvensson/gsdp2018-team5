@@ -1,38 +1,38 @@
 import socketserver
 import util
 import json
-
-# connections = [ { "type", "host", "port" }, ... ]
-connections = []
+import sys
 
 # based on https://docs.python.org/3.4/library/socketserver.html
-class MyTCPHandler(socketserver.BaseRequestHandler):
-    """
-    The RequestHandler class for our server.
 
-    It is instantiated once per connection to the server, and must
-    override the handle() method to implement communication to the
-    client.
-    """
+class Handler(socketserver.BaseRequestHandler):
 
     def handle(self):
-        # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024).strip()
-        print("{} wrote:".format(self.client_address[0]))
-        print(self.data)
-        # just send back the same data, but upper-cased
-        json_resp = "'{}': {}".format(self.client_address[0], self.data)
-        self.request.send(json_resp)
+        self.data = None
+        while self.data != 'quit':
+            self.data = self.request.recv(1024).strip()
+            print("{}:{} wrote:".format(self.client_address[0],self.client_address[1]))
+            print(str(self.data))
+            self.request.sendall(self.data.upper())
 
-    def new_connection(self):
-        pass
+def show_help():
+    print("Usage:")
+    print("\t-h | --help\tDisplay help")
+    print("\t-p | --port\tSelect port to use, default: 9999")
+    print("\t-H | --host\tHost address to use, default: localhost")
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 9999
+    for i in range(len(sys.argv)):
+        if (i != 0):
+            a = sys.argv[i]
+            if   (a=="-p" or a=="--port"):
+                PORT = int(sys.argv[i+1])
+            elif (a=="-H" or a=="--host"):
+                HOST = sys.argv[i+1]
+            elif (a=="-h" or a=="--help"):
+                show_help()
+                exit(0)
 
-    # Create the server, binding to localhost on port 9999
-    server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
+    server = socketserver.TCPServer((HOST, PORT), Handler)
     server.serve_forever()
