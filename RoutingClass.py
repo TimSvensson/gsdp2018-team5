@@ -32,9 +32,9 @@ class RoutingController:
         ],
         'cross2' : [
             {
-                'left': 'c'
+                'left': 'd'
             }, {
-                'right': 'd'
+                'right': 'c'
             }, {
                 'forward': 'end'
             }
