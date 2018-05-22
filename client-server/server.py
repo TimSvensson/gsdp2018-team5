@@ -1,38 +1,29 @@
+import socket
+import threading
 import socketserver
-import util
-import json
 
-# connections = [ { "type", "host", "port" }, ... ]
-connections = []
+class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
-# based on https://docs.python.org/3.4/library/socketserver.html
-class MyTCPHandler(socketserver.BaseRequestHandler):
-    """
-    The RequestHandler class for our server.
-
-    It is instantiated once per connection to the server, and must
-    override the handle() method to implement communication to the
-    client.
-    """
-
+    def setup(self):
+        print("{} connected".format(self.client_address))
+    
     def handle(self):
-        # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024).strip()
-        print("{} wrote:".format(self.client_address[0]))
-        print(self.data)
-        # just send back the same data, but upper-cased
-        json_resp = "'{}': {}".format(self.client_address[0], self.data)
-        self.request.send(json_resp)
+        while 1:
+            data = str(self.request.recv(1024), 'utf-8')
+            cur_thread = threading.current_thread()
+            response = bytes("{}: {}".format(cur_thread.name, data), 'utf-8')
+            print(str(response))
+            self.request.sendall(response)
 
-    def new_connection(self):
-        pass
+    def finish(self):
+        print("{} diconnected".format(self.client_address))
+
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 9999
+    HOST, PORT = 'localhost', 0
 
-    # Create the server, binding to localhost on port 9999
-    server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
+    server = ThreadedTCPServer((HOST,PORT), ThreadedTCPRequestHandler)
+    print(server.server_address)
     server.serve_forever()
