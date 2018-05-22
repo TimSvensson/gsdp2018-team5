@@ -7,12 +7,9 @@ import time
 import os
 from socket import *
 host = "169.254.208.174" # car's ip
-#host = "169.254.6.193"
 port = 14000
 addr = (host, port)
 UDPSock = socket(AF_INET, SOCK_DGRAM)
-
-
 
 def readserial(port1):
     ser = serial.Serial(port1, 9600, timeout=0.5)
@@ -21,8 +18,6 @@ def readserial(port1):
     while (1):
         data = ser.readline()
         print(data)
-
-
         if len(data) == 5:
             humidity = int.from_bytes(data[1:3], byteorder='big') / 10
             print(humidity)
@@ -62,7 +57,7 @@ if __name__ == '__main__':
 
     while (1):
         humidity, tem = readserial(port1)
-        time.sleep(0.5)
+        time.sleep(2)
        
         if humidity < 50:
             data="go forward"
@@ -75,7 +70,3 @@ if __name__ == '__main__':
             break
     UDPSock.close()
     os._exit(0)
-
-
-        
-
