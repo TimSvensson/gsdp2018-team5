@@ -26,8 +26,20 @@ def display_sub_bar2():
     print("\t\t****  WAREHOUSE MENU!  *****")
     print("\t\t****************************")
 
+def is_valid_char(c):
+    if c in ['a','b','c','d','A','B','C','D']:
+      
+        return True
+    else:
+        print("\nPlease choose between the character [A,B,C,D]")
+        return False
 
 
+def is_job_done(src, dst):
+    if (src != '' and dst != ''):
+        return True
+    else:
+        return False
 
 def display_ware():
 
@@ -45,27 +57,38 @@ def create_menu():
     os.system('clear')
     
     display_title_bar()
-    display_sub_bar2()
+    display_sub_bar1()
+    #init of variables
     choice = ''
+    source = ''
+    destination = ''
+
     while choice != "q":    
 
     # Let users know what they can do.
-        print("\n[1] OPTION1")
-        print("[2] OPTION2")
-        print("[3] OPTION3")
-        print("[q] Go back")
-    
-        choice = raw_input("Please select an option above? ")
+        print("\n[1] GET FROM: " + source.upper())
+        print("[2] DROP AT: " + destination.upper())
         
+        #if source and destination is chosed then show option excecute 
+        if (is_job_done(source, destination)):
+            print("[3] EXCECUTE JOB ORDER ")
+        print("[q] Cancel")
+        choice = raw_input("Please select an option above? ")
+
         # Respond to the user's choice.
         if choice == '1':
-            print("\nOPTION 1")
-            
+            while not is_valid_char(source):
+                source = raw_input("Select source of the package: ")
+
         elif choice == '2':
-            print("\nOPTION 2")
+            while not is_valid_char(destination):
+                destination = raw_input("Select the destination for the package:  ")
             
         elif choice == '3':
-            print("\nOPTION 3")
+            print("\nCONGRATULATIONS YOU MADE A JOB ORDER")
+            source = ''
+            destination = ''
+
         elif choice == 'q':
             main_menu()
         else:
@@ -77,10 +100,13 @@ def ware_menu():
     
     os.system('clear')
     display_title_bar()
-    display_sub_bar1()
+    display_sub_bar2()
+    
+    #init of variables
     choice = ''
     temp = ''
     hum = ''
+
     while choice != "q":    
 
     # Let users know what they can do.
@@ -97,7 +123,6 @@ def ware_menu():
             
         elif choice == '2':
             print("\nHere we will present the sensor data of Humidity and Temperature")
-
             print("Temperature: " + temp)
             print("Humidity : " + hum)
             
@@ -120,12 +145,13 @@ def main_menu():
         print("\n[1] Inspect the Warehouse")
         print("[2] Create a job")
         print("[q] Quit")
-    
+        
         choice = raw_input("Please select an option above? ")
         
         # Respond to the user's choice.
         if choice == '1':
             ware_menu()
+            
         elif choice == '2':
             create_menu()
         elif choice == 'q':
