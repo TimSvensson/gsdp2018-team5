@@ -42,6 +42,14 @@ CREATE TABLE `ev3_robot` (
 	PRIMARY KEY(id)
 );
 
+/* Hack To Bypass Column Cannot Be NULL Error Caused By The Job_id_trigger */
+
+INSERT INTO `ev3_robot`
+	(job_id, status) 
+VALUES
+	(0, 'Testing'),
+	(0, 'Done');
+
 /* Create a Trigger To Auto Increment The JOB_ID After The Previous Job's Status Changes To Done */
 
 DROP TRIGGER IF EXISTS `job_id_trigger`;
