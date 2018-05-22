@@ -1,13 +1,20 @@
 import socket
+import util
+import json
 import sys
 
+client_types = "arduino", "ev3", "ui", "database", "test"
+
 class client():
-    def __init__(self, host, port):
+    def __init__(self, host, port, type):
         self.server = host, port
+        self.type = type
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self):
         self.sock.connect(self.server)
+        dct = {'type':self.type}
+        self.send(json.dumps(dct))
                     
     def disconnect(self):
         self.sock.close()
@@ -15,8 +22,17 @@ class client():
     def send(self, str):
         self.sock.sendall(bytes(str, 'utf-8'))
 
+    def send_obj(self, obj):
+        if issubclass(obj, util.data):
+            self.send(json.dumps(obj.dct_from_obj))
+        else:
+            print("OBJECT NOT SUBCLASS OF UTIL.DATA")
+
     def read(self):
         return str(self.sock.recv(1024), 'utf-8')
+
+    def read_dct(self):
+        return json.loads(self.read())
 
 HOST, PORT = 'localhost', 9999
 if __name__ == "__main__":
@@ -30,12 +46,15 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Start client
-    c = client(HOST, PORT)
+    c = client(HOST, PORT, client_types[4])
     try:
         c.connect()
         while 1:
             msg = input("> ")
-            c.send(msg)
+            dct = {'message':msg}
+            j = json.dumps(dct)
+            c.send(j)
+
             print(c.read())
     finally:
         c.disconnect()
