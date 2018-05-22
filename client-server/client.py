@@ -49,12 +49,21 @@ if __name__ == "__main__":
     c = client(HOST, PORT, client_types[4])
     try:
         c.connect()
+        num_msg = 0
         while 1:
-            msg = input("> ")
-            dct = {'message':msg}
+            inp = input("> ")
+            if inp == "":
+            	dct = {'ping': True}
+            else:
+            	dct = {'message': inp}
             j = json.dumps(dct)
             c.send(j)
 
-            print(c.read())
+            while 1:
+            	from_serv = c.read_dct()
+            	print(from_serv['message'])
+            	num_msg += 1
+            	if num_msg >= from_serv['message_queue']:
+            		break
     finally:
         c.disconnect()
