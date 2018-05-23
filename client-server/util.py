@@ -36,13 +36,15 @@ _temp   = 'temperature'
 # status
 _stat   = 'status'
 _pos    = 'position'
-#job
+# job
 _to     = 'to'
 _from   = 'from'
 
 # Wareohuse
 _wh     = 'warehouse'
 
+# Database
+_db_f   = 'database_fetch'
 
 def ard_to_dct(hum, temp):
     return {_ard: True, _hum: hum, _temp: temp}
@@ -53,8 +55,8 @@ def ev3_status_to_dct(stat, pos):
 def ev3_job_to_dct(f, to):
     return {_ev3_j: True, _from: f, _to: to}
 
-def warehouse_to_dct(a,b,c,d,_in,out):
-    return {_wh: True, 'a':a, 'b':b, 'c':c, 'd':d, 'in':_in, 'out':out}
+def warehouse_to_dct(a,b,c,d,e,f):
+    return {_wh: True, 'a':a, 'b':b, 'c':c, 'd':d, 'e':e, 'f':f}
 
 # taken from
 # https://stackoverflow.com/questions/17667903/python-socket-receive-large-amount-of-data
