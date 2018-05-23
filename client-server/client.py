@@ -3,8 +3,6 @@ import util
 import json
 import sys
 
-client_types = "arduino", "ev3", "ui", "database", "test"
-
 class client():
     def __init__(self, host, port, type):
         self.server = host, port
@@ -13,26 +11,39 @@ class client():
 
     def connect(self):
         self.sock.connect(self.server)
-        dct = {'type':self.type}
-        self.send(json.dumps(dct))
+
+        dct = {util._type: self.type}
+        self.send(util._to_srv, dct)
                     
     def disconnect(self):
         self.sock.close()
 
-    def send(self, str):
-        self.sock.sendall(bytes(str, 'utf-8'))
 
-    def send_obj(self, obj):
-        if issubclass(obj, util.data):
-            self.send(json.dumps(obj.dct_from_obj))
-        else:
-            print("OBJECT NOT SUBCLASS OF UTIL.DATA")
 
+    # push / pop :: server / client
+    def __push(self, dct):
+        s = str(json.dumps(dct))
+        print(s)
+        util.send_msg(self.sock, (bytes(s, 'utf-8')))
+
+    # recv: recv, _push: true, _cont: cont
+    def send(self, recepient, dct):
+        dct.update({util._rec: recepient})
+        dct.update({util._push: True})
+        self.__push(dct)
+
+    # recv: to_serv, _pop: True
     def read(self):
-        return str(self.sock.recv(1024), 'utf-8')
+        pop = {util._rec: util._to_srv, util._pop: True}
+        self.__push(pop)
+        return json.loads(str(util.recv_msg(self.sock), 'utf-8'))
 
-    def read_dct(self):
-        return json.loads(self.read())
+
+
+t_ard1 = util.ard_to_dct(1,2)
+t_ard2 = util.ard_to_dct(15,12)
+
+t_ev3_s = util.ev3_status_to_dct('abc', 5)
 
 HOST, PORT = 'localhost', 9999
 if __name__ == "__main__":
@@ -46,26 +57,33 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Start client
-    c = client(HOST, PORT, client_types[4])
+    c = client(HOST, PORT, util._ard)
     try:
         c.connect()
+        first = True
         while 1:
-            inp = input("> ")
+        
+            if first == True:
+                c.send(util._ard, t_ard1)
+                c.send(util._ard, t_ard2)
+                c.send(util._db, t_ev3_s)
             
+            inp = input("> ")
+
             if (inp == ""):
-                dct = {util.flag_pop: True}
-                j = json.dumps(dct)
-                c.send(j)
-                from_serv = c.read_dct()
+
+                #c.push(util._to_srv, util._pop)
+                from_serv = c.read()
                 
-                if util.flag_empty in from_serv:
-                    print("End of message queue")
-                elif util.flag_msg in from_serv:
-                    print(from_serv[util.flag_msg])
+                if util._empty in from_serv:
+                    print("EOQ")
+                elif util._msg in from_serv:
+                    print(from_serv[util._msg])
 
             else:
-                dct = {util.flag_push: inp}
-                j = json.dumps(dct)
-                c.send(j)
+                msg = {util._msg: inp}
+                c.send(util._to_all, msg)
+
+            first = False
     finally:
         c.disconnect()
