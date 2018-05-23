@@ -3,8 +3,6 @@ import util
 import json
 import sys
 
-client_types = "arduino", "ev3", "ui", "database", "test"
-
 class client():
     def __init__(self, host, port, type):
         self.server = host, port
@@ -13,8 +11,9 @@ class client():
 
     def connect(self):
         self.sock.connect(self.server)
-        dct = {'type':self.type}
-        self.send(json.dumps(dct))
+
+        dct = {util._type: self.type}
+        self.send_to(util._to_srv, dct)
                     
     def disconnect(self):
         self.sock.close()
@@ -22,11 +21,15 @@ class client():
     def send(self, str):
         self.sock.sendall(bytes(str, 'utf-8'))
 
-    def send_obj(self, obj):
+    def str_from_obj(self, obj):
         if issubclass(obj, util.data):
-            self.send(json.dumps(obj.dct_from_obj))
+            return str(json.dumps(obj.dct_from_obj))
         else:
-            print("OBJECT NOT SUBCLASS OF UTIL.DATA")
+            return None
+
+    def send_to(self, recepient, content):
+        self.send(str(json.dumps(
+            {util._rec: recepient, util._cont: content})))
 
     def read(self):
         return str(self.sock.recv(1024), 'utf-8')
@@ -46,26 +49,24 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Start client
-    c = client(HOST, PORT, client_types[4])
+    c = client(HOST, PORT, util._test)
     try:
         c.connect()
         while 1:
             inp = input("> ")
             
             if (inp == ""):
-                dct = {util.flag_pop: True}
-                j = json.dumps(dct)
-                c.send(j)
+
+                c.send_to(util._to_srv, util._pop)
                 from_serv = c.read_dct()
                 
-                if util.flag_empty in from_serv:
+                if util._empty in from_serv:
                     print("End of message queue")
-                elif util.flag_msg in from_serv:
-                    print(from_serv[util.flag_msg])
+                elif util._msg in from_serv:
+                    print(from_serv[util._msg])
 
             else:
-                dct = {util.flag_push: inp}
-                j = json.dumps(dct)
-                c.send(j)
+                msg = {util._push: inp}
+                c.send_to(util._to_all, msg)
     finally:
         c.disconnect()

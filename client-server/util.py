@@ -1,11 +1,28 @@
 import sys
 import json
 
-flag_push = 'push'
-flag_pop = 'pop'
-flag_type = 'type'
-flag_empty = 'empty'
-flag_msg = 'msg'
+# Different message flags
+_push   = 'push'
+_pop    = 'pop'
+_type   = 'type'
+_empty  = 'empty'
+_cont   = 'cont'
+_msg    = 'msg'
+_rec    = 'rec'
+
+_to_all = 'to_all'
+_to_srv = 'to_srv'
+_to_db  = 'to_db'
+_to_ui  = 'to_ui'
+_to_ev3 = 'to_ev3'
+_to_ard = 'to_ard'
+
+# Different types of clients
+_test   = 'test'
+_db     = 'db'
+_ev3    = 'ev3'
+_ui     = 'ui'
+_ard    = 'ard'
 
 class data():
     def obj_from_dct():
@@ -17,18 +34,16 @@ class arduino_data(data):
     def __init__(self, humidity, temperature, uv):
         self.humidity = humidity
         self.temperature = temperature
-        self.uv = uv
     def obj_from_dct(dct):
         if self.__class__.__name__ in dct:
             return arduino_data(
-                dct['humidity'], dct['temperature'], dct['uv'])
+                dct['humidity'], dct['temperature'])
         return dct
     def dct_from_obj(self):
         dct = {}
         dct.update({'{}'.format(self.__class__.__name__): True})
         dct.update({'humidity':self.humidity})
         dct.update({'temperature': self.temperature})
-        dct.update({'uv':self.uv})
         return dct
 
 class ev3_status(data):
