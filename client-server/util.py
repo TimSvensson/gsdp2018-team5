@@ -1,5 +1,7 @@
 import sys
 import json
+import socket
+import struct
 
 # Different message flags
 _push   = 'push'
@@ -48,8 +50,36 @@ def ard_to_dct(hum, temp):
 def ev3_status_to_dct(stat, pos):
     return {_ev3_s: True, _stat: stat, _pos: pos}
 
-def ev3_job_to_dct(from, to):
-    return {_ev3_j: True, _from: from, _to: to}
+def ev3_job_to_dct(f, to):
+    return {_ev3_j: True, _from: f, _to: to}
 
-def warehouse_to_dct(a,b,c,d,in,out):
-    return {_wh: True, 'a':a, 'b':b, 'c':c, 'd':d, 'in':in, 'out':out}
+def warehouse_to_dct(a,b,c,d,_in,out):
+    return {_wh: True, 'a':a, 'b':b, 'c':c, 'd':d, 'in':_in, 'out':out}
+
+# taken from
+# https://stackoverflow.com/questions/17667903/python-socket-receive-large-amount-of-data
+def send_msg(sock, msg):
+    # Prefix each message with a 4-byte length (network byte order)
+    msg = struct.pack('>I', len(msg)) + msg
+    sock.sendall(msg)
+
+def recv_msg(sock):
+    # Read message length and unpack it into an integer
+    raw_msglen = recvall(sock, 4)
+    if not raw_msglen:
+        return None
+    msglen = struct.unpack('>I', raw_msglen)[0]
+    # Read the message data
+    return recvall(sock, msglen)
+
+def recvall(sock, n):
+    # Helper function to recv n bytes or return None if EOF is hit
+    data = b''
+    while len(data) < n:
+        packet = sock.recv(n - len(data))
+        if not packet:
+            return None
+        data += packet
+    return data
+
+    
