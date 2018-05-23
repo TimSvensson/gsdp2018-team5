@@ -26,7 +26,7 @@ def readserial(port):
             #
             # print(json_str)
 
-            file = open('test.json', 'w', encoding='utf-8')
+            file = open('Sensor_Data.json', 'w', encoding='utf-8')
             json.dump(dict_json, file, ensure_ascii=False)
             file.close()
 
@@ -42,11 +42,11 @@ def readserial(port):
 
 
 if __name__ == '__main__':
-    port = 'COM4'
+    port = 'COM3'
 
     print('start to read %s' %(port))
 
     while(1):
        readserial(port)
-       time.sleep(0.5)
+       time.sleep(1)
 
