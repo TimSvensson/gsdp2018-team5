@@ -73,16 +73,16 @@ def create_menu():
         if (is_job_done(source, destination)):
             print("[3] EXCECUTE JOB ORDER ")
         print("[q] Cancel")
-        choice = raw_input("Please select an option above? ")
+        choice = input("Please select an option above? ")
 
         # Respond to the user's choice.
         if choice == '1':
             while not is_valid_char(source):
-                source = raw_input("Select source of the package: ")
+                source = input("Select source of the package: ")
 
         elif choice == '2':
             while not is_valid_char(destination):
-                destination = raw_input("Select the destination for the package:  ")
+                destination = input("Select the destination for the package:  ")
             
         elif choice == '3':
             print("\nCONGRATULATIONS YOU MADE A JOB ORDER")
@@ -115,7 +115,7 @@ def ware_menu():
         print("[3] Where is the robot right now?")
         print("[q] Go back")
     
-        choice = raw_input("Please select an option above? ")
+        choice = input("Please select an option above? ")
         
         # Respond to the user's choice.
         if choice == '1':
@@ -146,7 +146,7 @@ def main_menu():
         print("[2] Create a job")
         print("[q] Quit")
         
-        choice = raw_input("Please select an option above? ")
+        choice = input("Please select an option above? ")
         
         # Respond to the user's choice.
         if choice == '1':
