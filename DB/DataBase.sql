@@ -27,7 +27,6 @@ CREATE TABLE `sensor_data` (
 	time_stamp TIMESTAMP NOT NULL,
 	humidity float,
 	temperature float,
-	luminance float,
 	PRIMARY KEY(id)
 );
 
