@@ -7,9 +7,9 @@ USE `automated_warehouse_management`;
 INSERT INTO `storage_unit`
 	(storage_unit_name, no_of_items, max_capacity) 
 VALUES
-	('A', 0, 1),
-	('B', 0, 1),
-	('c', 0, 1),
-	('D', 0, 1),
-	('E', 0, 1),
-	('F', 0, 1);
+	('A', 1, 1),
+	('B', 1, 1),
+	('c', 1, 1),
+	('D', 1, 1),
+	('E', 1, 1),
+	('F', 1, 1);
