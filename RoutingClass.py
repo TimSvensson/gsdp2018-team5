@@ -3,67 +3,67 @@ from time import sleep
 
 class RoutingController:
     WAREHOUSE_MAP = {
-        'start' : [
+        'Start' : [
             {
-                'left': 'b'
+                'left': 'B'
             }, {
-                'right': 'a'
+                'right': 'A'
             }, {
                 'forward': 'cross2'
             }
         ],
-        'a' : [
+        'A' : [
             {
-                'left': 'start'
+                'left': 'Start'
             }, {
                 'right': 'cross2'
             }, {
-                'forward': 'b'
+                'forward': 'B'
             }
         ],
-        'b' : [
+        'B' : [
             {
                 'left': 'cross2'
             }, {
-                'right': 'start'
+                'right': 'Start'
             }, {
-                'forward': 'a'
+                'forward': 'A'
             }
         ],
         'cross2' : [
             {
-                'left': 'd'
+                'left': 'D'
             }, {
-                'right': 'c'
+                'right': 'C'
             }, {
-                'forward': 'end'
+                'forward': 'End'
             }
         ],
-        'c' : [
+        'C' : [
             {
                 'left': 'cross1'
             }, {
-                'right': 'end'
+                'right': 'End'
             }, {
-                'forward': 'd'
+                'forward': 'D'
             }
         ],
-        'd' : [
+        'D' : [
             {
-                'left': 'end'
+                'left': 'End'
             }, {
                 'right': 'cross1'
             }, {
-                'forward': 'c'
+                'forward': 'C'
             }
         ],
         'cross1' : [
             {
-                'left': 'a'
+                'left': 'A'
             }, {
-                'right': 'b'
+                'right': 'B'
             }, {
-                'forward': 'start'
+                'forward': 'Start'
             }
         ],
         'end' : [

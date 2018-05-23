@@ -5,6 +5,7 @@ import RoutingClass as Route
 import ArmClass as Arm
 import MovementClass as Movement
 import bluetooth
+import ast
 
 hostMACAddress = '00:17:E9:F8:72:06' # The MAC address of a Bluetooth adapter on the server. The server might have multiple Bluetooth adapters.
 port = 3
@@ -117,8 +118,28 @@ class Robot():
     def addAction(self, action):
         self.action += action
 
+    def receiveCommand(self, command):
+        for location, action in command.items():
+            self.addRoute('', location)
+            self.addAction(action)
+
+    def reset(self):
+        self.path = []
+        self.action = []
+
+    def reload(self):
+        self.reset()
+        self.currentPos = "Start"
+
+    def stop(self):
+        self.mc.stop()
+
+    def start(self):
+        self.lineFollowing()
+
 if __name__ == "__main__":
 
+    done = False
     # rm = ev3.LargeMotor('outC')
     # lm = ev3.LargeMotor('outB')
     # lf = ev3.MediumMotor('outA')
@@ -136,19 +157,35 @@ if __name__ == "__main__":
     # gs.mode = "GYRO-ANG"
     #
     # robot = Robot("start", [], [], gs, cs, mc, ac, rc)
-    try:
-        client, clientInfo = s.accept()
-        while 1:
-            data = client.recv(size)
-            if data:
-                command = data.decode("ascii")
-                #format of data: a:b
-                print(command)
-                client.send(data) # Echo back to client
-    except:
-        print("Closing socket")
-        client.close()
-        s.close()
+    while not done:
+        try:
+            print("Waiting for Ev3-App connection")
+            client, clientInfo = s.accept()
+            print("Ev3-App Conntected\nWaiting for command")
+            while 1:
+                data = client.recv(size)
+                if data:
+                    command = data.decode("ascii")
+                    #format of data: a:b
+                    robot.reset()
+                    robot.receiveCommand(command)
+                    print(command)
+                    robot.start()
+                    print("Job Done!")
+                    client.send("done") # Echo back to client
+
+        except KeyboardInterrupt:
+            print("\nShut down the robot\n")
+            done = True
+            client.close()
+            s.close()
+
+        except:
+            robot.stop()
+            print("Connection lost! Closing Ev3-App socket!")
+            robot.reload()
+            client.close()
+
     # try:
     #     robot.addRoute('','d')
     #     robot.addRoute('', 'a')

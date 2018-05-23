@@ -58,20 +58,10 @@
     * GNU/Linux OS - (Debian, Fedora, LinuxMint, Ubuntu)
     * Python3
 
-**USE THE setupBtPan.py SCRIPT**
+**USE THE FOLLOWING COMMAND IN EV3DEV TO SETUP CONNECTION**
 
 ```bash
-    cd ./EV3
-```
+    sudo apt-get install bluetooth libbluetooth-dev python3-pip
 
-**MAKE THE PYTHON SCRIPT EXECUTABLE**
-
-```bash
-    sudo chmod u+x ./setupBtPan.py
-```
-
-**RUN THE SCRIPT**
-
-```bash
-    ./setupBtPan.py
+    sudo python3 -m pip install pybluez
 ```

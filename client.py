@@ -12,7 +12,7 @@ currentPos = 5
 currentAction = 0
 
 mapPos = ['Null', 'A', 'B', 'C', 'D', 'Start', 'End']
-mapAc = ['Null', 'Do nothing', 'Pick Up', 'Put Down']
+mapAc = ['Null', 'Nothing', 'Pick Up', 'Put Down']
 command = {}
 
 def menu():
@@ -96,8 +96,13 @@ def show():
 
 def apply():
     s.send(str(command))
-    data = s.recv(2048)
-    print(data)
+    done = False
+    while not done:
+        print("Waiting robot response!")
+        data = s.recv(2048)
+        if "done" in data:
+            done = True
+        print(data)
 if __name__ == "__main__":
     menu()
     s.close()
