@@ -3,6 +3,7 @@ import threading
 import socketserver
 import threading
 import json
+import util
 
 queue_lock = threading.Lock()
 message_queue = []
@@ -12,15 +13,13 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     def setup(self):
         self.queue_pos = 0
         print("{} :: {} connected".format(
-            threading.get_ident(), self.client_address))
+            threading.current_thread().getName(), self.client_address))
 
     def handle(self):
         while 1:
             self.to_queue()
-            self.from_queue()
-            print("tid {} queue_pos {}".format(
-                threading.get_ident(), self.queue_pos))
-            print(message_queue)
+            print("{} queue_pos {} len queue {}".format(
+                threading.current_thread().getName(), self.queue_pos, len(message_queue)))
 
     def finish(self):
         print("{} diconnected".format(self.client_address))
@@ -28,24 +27,33 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
 
     def to_queue(self):
-        dct = json.loads(str(self.request.recv(1024), 'utf-8'))
-        if 'ping' in dct:
-            pass
-        elif 'message' in dct:
+        from_client = json.loads(str(self.request.recv(1024), 'utf-8'))
+
+        if util.flag_pop in from_client:
+            self.from_queue()
+
+        elif util.flag_push in from_client:
             msg = "{} :: {}".format(
-                threading.get_ident(), dct)
+                threading.current_thread().getName(), from_client)
             with queue_lock:
                 message_queue.append(msg)
-        elif 'type' in dct:
+
+        elif util.flag_type in from_client:
             print("{} is of type {}".format(
-                threading.get_ident(), dct['type']))
-        
+                threading.current_thread().getName(), from_client['type']))
 
     def from_queue(self):
         with queue_lock:
+
             if self.queue_pos < len(message_queue):
-                self.send(json.dumps({'message_queue': len(message_queue), 'message': message_queue[self.queue_pos]}))
+                print("{} sending msg".format(threading.current_thread().getName()))
+                msg = {util.flag_msg: message_queue[self.queue_pos]}
                 self.queue_pos += 1
+
+            else:
+                print("{} sending empty".format(threading.current_thread().getName()))
+                msg = {util.flag_empty: True}
+            self.send(json.dumps(msg))
 
     def send(self, s):
         self.request.sendall(bytes(str(s), 'utf-8'))

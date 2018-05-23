@@ -1,6 +1,12 @@
 import sys
 import json
 
+flag_push = 'push'
+flag_pop = 'pop'
+flag_type = 'type'
+flag_empty = 'empty'
+flag_msg = 'msg'
+
 class data():
     def obj_from_dct():
         pass

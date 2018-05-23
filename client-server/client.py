@@ -49,21 +49,23 @@ if __name__ == "__main__":
     c = client(HOST, PORT, client_types[4])
     try:
         c.connect()
-        num_msg = 0
         while 1:
             inp = input("> ")
-            if inp == "":
-            	dct = {'ping': True}
-            else:
-            	dct = {'message': inp}
-            j = json.dumps(dct)
-            c.send(j)
+            
+            if (inp == ""):
+                dct = {util.flag_pop: True}
+                j = json.dumps(dct)
+                c.send(j)
+                from_serv = c.read_dct()
+                
+                if util.flag_empty in from_serv:
+                    print("End of message queue")
+                elif util.flag_msg in from_serv:
+                    print(from_serv[util.flag_msg])
 
-            while 1:
-            	from_serv = c.read_dct()
-            	print(from_serv['message'])
-            	num_msg += 1
-            	if num_msg >= from_serv['message_queue']:
-            		break
+            else:
+                dct = {util.flag_push: inp}
+                j = json.dumps(dct)
+                c.send(j)
     finally:
         c.disconnect()
