@@ -4,129 +4,166 @@ import ev3dev.ev3 as ev3
 import RoutingClass as Route
 import ArmClass as Arm
 import MovementClass as Movement
+import bluetooth
 
-path = []
-currentPos = ""
-action = []
+hostMACAddress = '00:17:E9:F8:72:06' # The MAC address of a Bluetooth adapter on the server. The server might have multiple Bluetooth adapters.
+port = 3
+backlog = 1
+size = 1024
+s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+s.bind((hostMACAddress, port))
+s.listen(backlog)
 
-def lineFollowing(cs, gs, mc, ac):
-    mc.setNormal()
-    stop = False
-    while not stop:
-        print ("COlor: ", cs.value())
-        if (cs.value() == 6):
-            mc.turnLeft()
-        elif (cs.value() == 1):
-            mc.turnRight()
-        mc.setSpeed(300)
-        if (cs.value() == 5):
-            print("Pickup")
-            mc.stop()
-            ac.pickUp()
-            # stop = True
-            turnAround(gs, 180, mc)
-        if (cs.value() == 3):
-            processRoute(gs, mc)
-        if (cs.value() == 4):
-            print("PutDown")
-            mc.stop()
-            ac.putDown()
-            mc.setInverse()
-            mc.forward()
-            sleep(1)
-            mc.setNormal()
-            turnAround(gs, 180, mc)
-            # stop = True
-            if (len(path) == 0):
-                stop = True
+class Robot():
+    def __init__(self, currentPos, path, action, gs, cs, mc, ac, rc):
+        #set wheel motor for MovementController
+        self.currentPos = currentPos
+        self.path = path
+        self.action = action
+        self.cs = cs
+        self.gs = gs
+        self.mc = mc
+        self.ac = ac
+        self.rc = rc
 
-# def pickUp
-#
-def turnRight(gs, degree, mc):
-    sleep(0.3)
-    tmp = gs.value()
-    while(abs(gs.value() - tmp) <= degree):
-        mc.turnRight()
+    def lineFollowing(self):
+        self.mc.setNormal()
+        stop = False
+        while not stop:
+            if (self.cs.value() == 6):
+                self.mc.turnLeft()
+            elif (self.cs.value() == 1):
+                self.mc.turnRight()
+            self.mc.setSpeed(300)
+            if (self.cs.value() == 5):
+                self.mc.stop()
+                self.processAction()
+                if (len(self.path) == 0 and len(self.action) == 0):
+                    stop = True
 
-def turnLeft(gs, degree, mc):
-    # sleep(0.1)
-    tmp = gs.value()
-    mc.setLeftInverse()
-    while(abs(gs.value() - tmp) <= degree):
-        # mc.turnLeft()
-        mc.setLeftSpeed(10)
-        mc.setRightSpeed(200)
-    mc.setNormal()
+            if (self.cs.value() == 3):
+                self.mc.setSpeed(300)
+                self.processRoute()
 
-def turnAround(gs, degree, mc):
-    mc.setLeftSpeed(200)
-    mc.setRightInverse()
-    mc.setRightSpeed(0)
-    gs.mode = "GYRO-RATE"
-    gs.mode = "GYRO-ANG"
-    tmp = gs.value()
-    while(abs(gs.value() - tmp) <= degree):
-        print("tmp: ",tmp)
-        print("value: ",gs.value())
-        print(abs(gs.value() - tmp))
-        pass
-    mc.setNormal()
-    mc.stop()
 
-def forward():
-    # sleep(0.4)
-    mc.forward()
-    sleep(0.4)
+    def processRoute(self):
+        if self.path[0] == "left":
+            self.turnLeft(83)
+        elif self.path[0] == "right":
+            self.turnRight(87)
+        else:
+            self.forward()
+        self.path.pop(0)
 
-def processRoute(gs, mc):
-    global path
-    print (path)
-    if path[0] == "left":
-        turnLeft(gs, 82, mc)
-    elif path[0] == "right":
-        turnRight(gs, 90, mc)
-    else:
-        forward()
-    path.pop(0)
-# def turnRight(gs, degree):
-#
-# def foward():
-#
-# def backward():
+    def processAction(self):
+        if (len(self.action) > 0):
+            print(self.action[0])
+            if self.action[0] == "pickup":
+                self.ac.pickUp()
+            elif self.action[0] == "putdown":
+                self.ac.putDown()
+                self.mc.setInverse()
+                self.forward()
+                self.mc.setNormal()
+            self.action.pop(0)
+
+        self.turnAround(180)
+
+    def turnAround(self, degree):
+        self.mc.setRightInverse()
+        self.mc.setLeftSpeed(200)
+        self.mc.setRightSpeed(200)
+        self.gs.mode = "GYRO-RATE"
+        self.gs.mode = "GYRO-ANG"
+        tmp = self.gs.value()
+        while(abs(self.gs.value() - tmp) <= degree):
+            # print("tmp: ",tmp)
+            # print("value: ",self.gs.value())
+            # print(abs(self.gs.value() - tmp))
+            pass
+        self.mc.setNormal()
+        self.mc.stop()
+
+    def forward(self):
+        # sleep(0.4)
+        self.mc.forward()
+        sleep(0.5)
+
+    def turnRight(self, degree):
+        sleep(0.1)
+        tmp = self.gs.value()
+        while(abs(self.gs.value() - tmp) <= degree):
+            self.mc.setLeftSpeed(200)
+            self.mc.setRightSpeed(0)
+
+    def turnLeft(self, degree):
+        sleep(0.15)
+        tmp = self.gs.value()
+        self.mc.setLeftInverse()
+        while(abs(self.gs.value() - tmp) <= degree):
+            # mc.turnLeft()
+            self.mc.setLeftSpeed(0)
+            self.mc.setRightSpeed(200)
+        self.mc.setNormal()
+
+    def addRoute(self, start, end):
+        if start == "":
+            start = self.currentPos
+        self.path += self.rc.findPath(start, end)
+        self.currentPos = end
+    def getRoute(self):
+        return self.path
+
+    def addAction(self, action):
+        self.action += action
 
 if __name__ == "__main__":
-    global path
-    global currentPos
 
-    rm = ev3.LargeMotor('outC')
-    lm = ev3.LargeMotor('outB')
-    lf = ev3.MediumMotor('outA')
-    gs = ev3.GyroSensor()
-    cs = ev3.ColorSensor()
-
-    mc = Movement.MovementController(lm, rm)
-    ac = Arm.ArmController(lf)
-    rc = Route.RoutingController('start', 'd')
-    currentPos = 'd'
-    path = rc.findPath()
-    path = path + rc.findPath(currentPos, 'end')
-    path = path + rc.findPath('end', 'c')
-    path = path + rc.findPath('c', 'end')
-    print(path)
-
-    assert cs.connected
-    assert gs.connected
-
-    cs.mode = "COL-COLOR"
-    gs.mode = "GYRO-ANG"
-
+    # rm = ev3.LargeMotor('outC')
+    # lm = ev3.LargeMotor('outB')
+    # lf = ev3.MediumMotor('outA')
+    # gs = ev3.GyroSensor()
+    # cs = ev3.ColorSensor()
+    #
+    # mc = Movement.MovementController(lm, rm)
+    # ac = Arm.ArmController(lf)
+    # rc = Route.RoutingController('', '')
+    #
+    # # action = ["pickup", "putdown", "pickup", "putdown"]
+    # assert cs.connected
+    # assert gs.connected
+    # cs.mode = "COL-COLOR"
+    # gs.mode = "GYRO-ANG"
+    #
+    # robot = Robot("start", [], [], gs, cs, mc, ac, rc)
     try:
-        lineFollowing(cs, gs, mc, ac)
-        mc.stop()
-        # ac.pickUp()
-        # mc.stop()
-    except KeyboardInterrupt:
-        mc.stop()
+        client, clientInfo = s.accept()
+        while 1:
+            data = client.recv(size)
+            if data:
+                command = data.decode("ascii")
+                #format of data: a:b
+                print(command)
+                client.send(data) # Echo back to client
+    except:
+        print("Closing socket")
+        client.close()
+        s.close()
+    # try:
+    #     robot.addRoute('','d')
+    #     robot.addRoute('', 'a')
+    #     robot.addRoute('', 'c')
+    #     robot.addRoute('', 'b')
+    #     robot.addRoute('', 'start')
+    #     print (robot.getRoute())
+    #     robot.lineFollowing()
+    #     mc.stop()
+    #     # ac.pickUp()
+    #     # mc.stop()
+    # except KeyboardInterrupt:
+    #     mc.stop()
+    # except:
+    #     mc.stop()
 
     #red: 5
     #black: 1
