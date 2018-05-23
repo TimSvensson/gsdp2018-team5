@@ -75,3 +75,21 @@
 ```bash
     ./setupBtPan.py
 ```
+
+---
+
+# BOOTSTRAP THE DEPLOYMENT OF MARIADB AND BASIC PROJECT REQUIREMENTS
+
+**MAKE THE deploy.sh SHELL SCRIPT EXECUTABLE**
+
+```bash
+	sudo chmod u+x ./deploy.sh
+```
+
+**USE THE deploy.sh SHELL SCRIPT**
+
+```bash
+	sudo ./deploy.sh
+```
+
+**THE deploy.sh SHELL SCRIPT ONLY WORKS ON FEDORA**
