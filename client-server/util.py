@@ -6,96 +6,50 @@ _push   = 'push'
 _pop    = 'pop'
 _type   = 'type'
 _empty  = 'empty'
-_cont   = 'cont'
-_msg    = 'msg'
-_rec    = 'rec'
+_cont   = 'contents'
+_msg    = 'message'
+_rec    = 'receiver'
 
+# Recipient
 _to_all = 'to_all'
-_to_srv = 'to_srv'
+_to_srv = 'to_server'
 _to_db  = 'to_db'
 _to_ui  = 'to_ui'
 _to_ev3 = 'to_ev3'
-_to_ard = 'to_ard'
+_to_ard = 'to_arduino'
 
 # Different types of clients
 _test   = 'test'
-_db     = 'db'
-_ev3    = 'ev3'
-_ui     = 'ui'
-_ard    = 'ard'
+_db     = 'database'
+_ev3_s  = 'ev3_status'
+_ev3_j  = 'ev3_job'
+_ui     = 'user-interface'
+_ard    = 'arduino'
 
-class data():
-    def obj_from_dct():
-        pass
-    def dct_from_obj():
-        pass
+# Arduino sensors
+_hum    = 'humidity'
+_temp   = 'temperature'
 
-class arduino_data(data):
-    def __init__(self, humidity, temperature, uv):
-        self.humidity = humidity
-        self.temperature = temperature
-    def obj_from_dct(dct):
-        if self.__class__.__name__ in dct:
-            return arduino_data(
-                dct['humidity'], dct['temperature'])
-        return dct
-    def dct_from_obj(self):
-        dct = {}
-        dct.update({'{}'.format(self.__class__.__name__): True})
-        dct.update({'humidity':self.humidity})
-        dct.update({'temperature': self.temperature})
-        return dct
+# EV3
+# status
+_stat   = 'status'
+_pos    = 'position'
+#job
+_to     = 'to'
+_from   = 'from'
 
-class ev3_status(data):
-    def __init__(self, status, position):
-        self.status = status
-        self.position = position
-    def obj_from_dct(self, dct):
-        if self.__class__.__name__ in dct:
-            return ev3_status(dct['status'], dct['position'])
-        return dct
-    def dct_from_obj(self):
-        dct = {}
-        dct.update({'{}'.format(self.__class__.__name__): True})        
-        dct.update({'status':self.status})
-        dct.update({'position':self.position})
-        return dct
+# Wareohuse
+_wh     = 'warehouse'
 
-class warehouse_data(data):
-    def __init__(self, storage_units):
-        self.storage_units = storage_unit
-    def obj_from_dct(self, dct):
-        if self.__class__.__name__ in dct:
-            del dict[self.__class__.__name__]
-            return warehouse_data(dct)
-    def dct_from_obj(dct):
-        dct = {}
-        dct.update({'{}'.format(self.__class__.__name__): True})
-        return dct
 
-class ev3_job(data):
-    def __init__(self, pick_up, drop_off):
-        self.pick_up = pick_up
-        self.drop_off = drop_off
-    def obj_from_dct(self, dct):
-        if self.__class__.__name__ in dct:
-            return ev3_job(dct['pick_up'], sct['drop_off'])
-        return dct
-    def dct_from_obj(self):
-        dct = {}
-        dct.update({'{}'.format(self.__class__.__name__): True})
-        dct.update({'pick_up':self.pick_up})
-        dct.update({'drop_off':self.drop_off})
-        return dct
+def ard_to_dct(hum, temp):
+    return {_ard: True, _hum: hum, _temp: temp}
 
-if __name__ == "__main__":
-    a1 = arduino_data(-100,1,None)
-    a_dct1 = a1.obj_to_dct()
-    print(a_dct1)
-    a2 = arduino_data.dct_to_obj(a_dct1)
-    if a1.humidity == a2.humidity and\
-            a1.temperature == a1.temperature and\
-            a1.uv == a2.uv:
-        print("Arduino test result: a1 == a2! :-)")
-    else:
-        print("Arduino test result: a1 != a2! :-(")
+def ev3_status_to_dct(stat, pos):
+    return {_ev3_s: True, _stat: stat, _pos: pos}
+
+def ev3_job_to_dct(from, to):
+    return {_ev3_j: True, _from: from, _to: to}
+
+def warehouse_to_dct(a,b,c,d,in,out):
+    return {_wh: True, 'a':a, 'b':b, 'c':c, 'd':d, 'in':in, 'out':out}
