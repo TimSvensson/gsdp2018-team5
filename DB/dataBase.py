@@ -87,68 +87,59 @@ def client_func():
         
         time.sleep(1) # One Second Delay
         
-        dct = c.read()
+        while True:
 
-        
-        if util._ard in dct:
-            temperature =  dct[util._temp]
-            humidity = dct[util._hum]
-        
-            db_cursor.execute('INSERT INTO `sensor_data` (humidity, temperature) VALUES ({}, {})'.format(humidity, temperature))
-
-            conn.commit()
-
-        elif util._ev3_s in dct:
-            status = dct[util._stat]
-            ev3_position = dct[util._pos]
-
-            db_cursor.execute('INSERT INTO `ev3_robot` (status, ev3_position) VALUES ({}, {})'.format(status, ev3_position))
-
-            conn.commit()
-
-
-        elif util._wh in dct:
-            a = dct['a']
-            b = dct['b']
-            c = dct['c']
-            d = dct['d']
-            e = dct['e']
-            f = dct['f']
-
-            lst = []
-            lst.append(a)
-            lst.append(b)
-            lst.append(c)
-            lst.append(d)
-            lst.append(e)
-            lst.append(f)
-
-            db_cursor.execute('SELECT storage_unit_name from `storage_unit`')
-            storage_unit_names = db_cursor.fetchall()
-
-            for row in storage_unit_names:
-                for items in lst:
-                    db_cursor.execute('UPDATE TABLE `storage_unit` SET no_of_items = {} WHERE storage_unit_name = {}'.format(items, row))
-
-            conn.commit()
-
-        elif util._db_f in dct:
+            dct = c.read()
+    
             
-            warehouse = getStorageUnitData()
+            if util._ard in dct:
+                temperature =  dct[util._temp]
+                humidity = dct[util._hum]
+                db_cursor.execute('INSERT INTO `sensor_data` (humidity, temperature) VALUES ({}, {})'.format(humidity, temperature))
+                conn.commit()
+    
+            elif util._ev3_s in dct:
+                status = dct[util._stat]
+                ev3_position = dct[util._pos]
+                db_cursor.execute('INSERT INTO `ev3_robot` (status, ev3_position) VALUES ({}, {})'.format(status, ev3_position))
+                conn.commit()
+    
+            elif util._wh in dct:
+                a = dct['a']
+                b = dct['b']
+                c = dct['c']
+                d = dct['d']
+                e = dct['e']
+                f = dct['f']
+    
+                lst = []
+                lst.append(a)
+                lst.append(b)
+                lst.append(c)
+                lst.append(d)
+                lst.append(e)
+                lst.append(f)
+    
+                db_cursor.execute('SELECT storage_unit_name from `storage_unit`')
+                storage_unit_names = db_cursor.fetchall()
+                for row in storage_unit_names:
+                    for items in lst:
+                        db_cursor.execute('UPDATE TABLE `storage_unit` SET no_of_items = {} WHERE storage_unit_name = {}'.format(items, row))
+                conn.commit()
+    
+            elif util._db_f in dct:
+                warehouse = getStorageUnitData()
+                arduino = getSensorData()
+                ev3_data = getEV3Data()
+    
+                dct = {}
+                dct.update(arduino)
+                dct.update(ev3_data)
+                dct.update(warehouse)
+                c.send(util._to_srv, dct)
 
-
-            arduino = getSensorData()
-
-
-            ev3_data = getEV3Data()
-
-
-            dct = {}
-            dct.update(arduino)
-            dct.update(ev3_data)
-            dct.update(warehouse)
-
-            c.send(util._to_srv, dct)
+            elif util._empty in dct:
+                break
 
     c.disconnect()
 
