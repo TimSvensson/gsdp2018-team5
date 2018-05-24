@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import MySQLdb as mdb
+import time
 import sys
 sys.path.append('../client-server')
 
@@ -73,7 +74,7 @@ def closeConnection():
 
 def client_func():
 
-    PORT = sys.argv[1]
+    PORT = int(sys.argv[1])
     HOST = "localhost"
     c = client.client(HOST, PORT, util._db)
     c.connect()
@@ -84,7 +85,9 @@ def client_func():
 
     while True:
         
-        msg = c.read()
+        time.sleep(1) # One Second Delay
+        
+        dct = c.read()
 
         
         if util._ard in dct:
