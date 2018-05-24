@@ -48,20 +48,22 @@ class Robot():
 
 
     def processRoute(self):
+        print(self.path)
         if self.path[0] == "left":
-            self.turnLeft(83)
+            self.turnLeft(78)
         elif self.path[0] == "right":
             self.turnRight(87)
         else:
             self.forward()
+            sleep(0.7)
         self.path.pop(0)
 
     def processAction(self):
         if (len(self.action) > 0):
             print(self.action[0])
-            if self.action[0] == "pickup":
+            if self.action[0] == "Pick Up":
                 self.ac.pickUp()
-            elif self.action[0] == "putdown":
+            elif self.action[0] == "Put Down":
                 self.ac.putDown()
                 self.mc.setInverse()
                 self.forward()
@@ -91,7 +93,7 @@ class Robot():
         sleep(0.5)
 
     def turnRight(self, degree):
-        sleep(0.1)
+        sleep(0.13)
         tmp = self.gs.value()
         while(abs(self.gs.value() - tmp) <= degree):
             self.mc.setLeftSpeed(200)
@@ -118,10 +120,15 @@ class Robot():
     def addAction(self, action):
         self.action += action
 
-    def receiveCommand(self, command):
-        for location, action in command.items():
-            self.addRoute('', location)
-            self.addAction(action)
+    def receiveCommand(self, commands):
+        for command in commands:
+            for location, action in command.items():
+                if (location == self.currentPos):
+                    self.reset()
+                    return False
+                self.addRoute('', location)
+                self.addAction([action])
+        return True
 
     def reset(self):
         self.path = []
@@ -140,23 +147,24 @@ class Robot():
 if __name__ == "__main__":
 
     done = False
-    # rm = ev3.LargeMotor('outC')
-    # lm = ev3.LargeMotor('outB')
-    # lf = ev3.MediumMotor('outA')
-    # gs = ev3.GyroSensor()
-    # cs = ev3.ColorSensor()
-    #
-    # mc = Movement.MovementController(lm, rm)
-    # ac = Arm.ArmController(lf)
-    # rc = Route.RoutingController('', '')
-    #
-    # # action = ["pickup", "putdown", "pickup", "putdown"]
-    # assert cs.connected
-    # assert gs.connected
-    # cs.mode = "COL-COLOR"
-    # gs.mode = "GYRO-ANG"
-    #
-    # robot = Robot("start", [], [], gs, cs, mc, ac, rc)
+    rm = ev3.LargeMotor('outC')
+    lm = ev3.LargeMotor('outB')
+    lf = ev3.MediumMotor('outA')
+    gs = ev3.GyroSensor()
+    cs = ev3.ColorSensor()
+
+    mc = Movement.MovementController(lm, rm)
+    ac = Arm.ArmController(lf)
+    rc = Route.RoutingController('', '')
+
+    # action = ["pickup", "putdown", "pickup", "putdown"]
+    assert cs.connected
+    assert gs.connected
+    cs.mode = "COL-COLOR"
+    gs.mode = "GYRO-ANG"
+
+    robot = Robot("Start", [], [], gs, cs, mc, ac, rc)
+
     while not done:
         try:
             print("Waiting for Ev3-App connection")
@@ -165,24 +173,33 @@ if __name__ == "__main__":
             while 1:
                 data = client.recv(size)
                 if data:
-                    command = data.decode("ascii")
+                    commands = ast.literal_eval(data.decode("ascii"))
                     #format of data: a:b
                     robot.reset()
-                    robot.receiveCommand(command)
-                    print(command)
-                    robot.start()
-                    print("Job Done!")
-                    client.send("done") # Echo back to client
+                    print(commands)
+                    if (robot.receiveCommand(commands)):
+                        robot.start()
+                        print("Job Done!")
+                        client.send("done") # Echo back to client
+                    else:
+                        client.send("refuse")
 
         except KeyboardInterrupt:
+            robot.stop()
             print("\nShut down the robot\n")
             done = True
             client.close()
             s.close()
 
-        except:
+        except bluetooth.btcommon.BluetoothError:
             robot.stop()
             print("Connection lost! Closing Ev3-App socket!")
+            robot.reset()
+            client.close()
+
+        except:
+            robot.stop()
+            print("Something wrong happens! Please reset the robot to starting point")
             robot.reload()
             client.close()
 

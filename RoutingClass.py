@@ -66,11 +66,11 @@ class RoutingController:
                 'forward': 'Start'
             }
         ],
-        'end' : [
+        'End' : [
             {
-                'left': 'c'
+                'left': 'C'
             }, {
-                'right': 'd'
+                'right': 'D'
             }, {
                 'forward': 'cross1'
             }

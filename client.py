@@ -13,30 +13,32 @@ currentAction = 0
 
 mapPos = ['Null', 'A', 'B', 'C', 'D', 'Start', 'End']
 mapAc = ['Null', 'Nothing', 'Pick Up', 'Put Down']
-command = {}
+command = []
 
 def menu():
     done = False
     while not done:
-        print("SIMPLE EV3-APP MENU:\n1.Set command for robot\n2.Show current command\n3.Apply command\n4.Quit")
+        print("SIMPLE EV3-APP MENU:\n1.Set command for robot\n2.Show current command\n3.Reset Command\n4.Apply command\n5.Quit")
         choice = input("Your choice: ")
-        # try:
-        choice = int(choice)
-        if (choice > 0 and choice < 5):
-            if (choice == 1):
-                location()
-                action()
-            elif (choice == 2):
-                show()
-            elif (choice == 3):
-                apply()
+        try:
+            choice = int(choice)
+            if (choice > 0 and choice < 6):
+                if (choice == 1):
+                    location()
+                    action()
+                elif (choice == 2):
+                    show()
+                elif (choice == 3):
+                    reset()
+                elif (choice == 4):
+                    apply()
+                else:
+                    print("Goodbye")
+                    done = True
             else:
-                print("Goodbye")
-                done = True
-        else:
+                print("Invalid option")
+        except:
             print("Invalid option")
-        # except:
-        #     print("Invalid option")
 
 
 def location():
@@ -70,12 +72,12 @@ def action():
         try:
             choice = int(choice)
             if (choice > 0 and choice < 4):
-                if (currentAction != 0 and currentAction == choice):
+                if (currentAction != 1 and currentAction == choice):
                     showAction()
                     print("Same ACTION cant be perform twice in a row!\n")
                 else:
                     currentAction = choice
-                    command[mapPos[currentPos]] = mapAc[currentAction]
+                    command.append({mapPos[currentPos] : mapAc[currentAction]})
                     done = True
             else:
                 print ("Invalid Options!\n")
@@ -90,19 +92,36 @@ def showAction():
     print ("The current action of the robot: ", mapAc[currentAction])
 
 def show():
-    for location, action in command.items():
-        print("Go to ", location, " : do ", action)
-    print(str(command))
+    for each in command:
+        for location, action in each.items():
+            print("Go to ", location, " : do ", action)
+    # print(str(command))
+
+def reset():
+    global command
+    global currentPos
+    global currentAction
+    command = []
+    currentPos = 0
+    currentAction = 0
 
 def apply():
-    s.send(str(command))
-    done = False
-    while not done:
-        print("Waiting robot response!")
-        data = s.recv(2048)
-        if "done" in data:
-            done = True
-        print(data)
+    if (str(command) != "[]"):
+        # command = [{'C' : 'Pick Up'}, {'A' : 'Put Down'}]
+        s.send(str(command))
+        done = False
+        while not done:
+            print("Waiting robot response!")
+            data = s.recv(2048)
+            if "done" in data.decode('ascii'):
+                done = True
+                print("Job Done")
+            elif "refuse" in data.decode('ascii'):
+                done = True
+                print("Job Refused")
+            reset()
+    else:
+        print("Define command first")
 if __name__ == "__main__":
     menu()
     s.close()
