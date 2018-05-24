@@ -11,9 +11,9 @@ import util, client
 # con - the CONnection to the server
 con = None
 
-ard_sensors = {}
-wh_items    = {}
-ev3_status  = {}
+ard_sensors = {util._ard:True, util._hum:'', util._temp}
+wh_items    = {util._wh:True, 'a':0, 'b':, 'c':0, 'd':0, 'e':, 'f':0}
+ev3_status  = {util._ev3_s:True, util._stat:'', util._pos:''}
 
 def display_title_bar():
 
@@ -100,8 +100,10 @@ def create_menu():
             
         elif choice == '3':
             print("\nCONGRATULATIONS YOU MADE A JOB ORDER")
+            con.send(util._to_ev3, {_ev3_j:True, _from:source, _to:destination})
             source = ''
             destination = ''
+
 
         elif choice == 'q':
             main_menu()
@@ -185,11 +187,18 @@ def update():
     resp = con.read()
 
     if util._ev3_s in resp:
-        ev3_status = resp[_ev3_s]
+        ev3_status[util._pos] = resp[util._pos]
+        ev3_status[util._stat] = resp[util._stat]
     if util._wh in resp:
-        wh_items = resp[util._wh]
+        wh_items['a'] = resp['a']
+        wh_items['b'] = resp['b']
+        wh_items['c'] = resp['c']
+        wh_items['d'] = resp['d']
+        wh_items['e'] = resp['e']
+        wh_items['f'] = resp['f']
     if util._ard in resp:
-        ard_sensors = resp[_ard]
+        ard_sensors[util._temp] = resp[util._temp]
+        ard_sensors[util._hum] = resp[util._hum]
 
 if __name__ == '__main__':
     HOST, PORT = sys.argv[1], int(sys.argv[2])
