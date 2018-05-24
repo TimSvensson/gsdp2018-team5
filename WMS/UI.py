@@ -16,30 +16,25 @@ wh_items    = {util._wh:True, 'a':0, 'b':, 'c':0, 'd':0, 'e':, 'f':0}
 ev3_status  = {util._ev3_s:True, util._stat:'', util._pos:''}
 
 def display_title_bar():
-
     os.system('clear')
-
     # Display a title bar.
     print("\t*****************************************************")
     print("\t***  Welcome to our Warehouse Management System!  ***")
     print("\t*****************************************************")
 
-def display_sub_bar1():
-
+def display_job_bar():
     print("\t\t****************************")
     print("\t\t***  CREATE A JOB MENU!  ***")
     print("\t\t****************************")
 
 
-def display_sub_bar2():
-
+def display_ware_bar():
     print("\t\t****************************")
     print("\t\t****  WAREHOUSE MENU!  *****")
     print("\t\t****************************")
 
-def is_valid_char(c):
-    if c in ['a','b','c','d','A','B','C','D']:
-      
+def is_valid_char(c):  
+    if c in ['a','b','c','d','A','B','C','D']:   
         return True
     else:
         print("\nPlease choose between the character [A,B,C,D]")
@@ -54,39 +49,44 @@ def is_job_done(src, dst):
 
 def display_ware():
 
-    print("\n")
-    print("      In {}".format(wh_items['e']))
-    print("++++++|+++++++")
-    print("+{}A---|----B{}+".format(wh_items['a'], wh_items['b']))
-    print("++++++|+++++++")
-    print("+{}C---|----D{}+".format(wh_items['c'], wh_items['d']))
-    print("++++++|++++++")
-    print("     Out {}".format(wh_items['f']))
-
+    print("\n     End")
+    print("   ───▄───")
+    print("      │") 
+    print("╔═════│══════╗")
+    print("║     │      ║")
+    print("║D■───█────■C║")
+    print("║     │      ║")
+    print("╠═════│══════╣")
+    print("║     │      ║")
+    print("║B■───█────■A║")
+    print("║     │      ║")
+    print("╚═════│══════╝ ")
+    print("      │") 
+    print("   ───▀───")
+    print("    Start")
 
 def create_menu():
-
-    os.system('clear')
-    
+    #clear terminal screen
+    os.system('clear')   
     display_title_bar()
-    display_sub_bar1()
+    display_job_bar()
     #init of variables
     choice = ''
     source = ''
     destination = ''
 
     while choice != "q":
-
         update()
-
     # Let users know what they can do.
-        print("\n[1] GET FROM: " + source.upper())
-        print("[2] DROP AT: " + destination.upper())
+        print("\n----------------------------")
+        print("[1] PICK UP PACKAGE AT LOCATION: " + source.upper())
+        print("[2] DELIVER PACKAGE AT LOCATION: " + destination.upper())
         
         #if source and destination is chosed then show option excecute 
         if (is_job_done(source, destination)):
-            print("[3] EXCECUTE JOB ORDER ")
+            print("[3] EXCECUTE JOB ORDER")
         print("[q] Cancel")
+        print("----------------------------")
         choice = input("Please select an option above? ")
 
         # Respond to the user's choice.
@@ -113,10 +113,10 @@ def create_menu():
 
 
 def ware_menu():
-    
+    #clear terminal screen
     os.system('clear')
     display_title_bar()
-    display_sub_bar2()
+    display_ware_bar()
     
     #init of variables
     choice = ''
@@ -128,10 +128,13 @@ def ware_menu():
         update()
 
     # Let users know what they can do.
-        print("\n[1] Show a map of the Warehouse")
+
+        print("\n----------------------------")
+        print("[1] Show a map of the Warehouse")
         print("[2] Show sensor data")
-        print("[3] Where is the robot right now?")
+        print("[3] Location of the robot?")
         print("[q] Go back")
+        print("----------------------------")
     
         choice = input("Please select an option above? ")
         
@@ -161,11 +164,13 @@ def main_menu():
 
         update()
 
-        # Let users know what they can do.
-        print("\n[1] Inspect the Warehouse")
+    # Let users know what they can do.
+        print("\n----------------------------")
+        print("[1] Inspect the Warehouse")
         print("[2] Create a job")
         print("[q] Quit")
-        
+        print("----------------------------")
+
         choice = input("Please select an option above? ")
         
         # Respond to the user's choice.
