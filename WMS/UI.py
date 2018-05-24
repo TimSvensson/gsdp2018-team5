@@ -148,7 +148,7 @@ def ware_menu():
             print("Humidity : " + ard_sensors[util._hum])
             
         elif choice == '3':
-            print("\nLocation {]".format(ev3_status[util._pos]))
+            print("\nLocation {}".format(ev3_status[util._pos]))
         elif choice == 'q':
             main_menu()
         else:
