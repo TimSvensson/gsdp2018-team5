@@ -11,8 +11,8 @@ import util, client
 # con - the CONnection to the server
 con = None
 
-ard_sensors = {util._ard:True, util._hum:'', util._temp}
-wh_items    = {util._wh:True, 'a':0, 'b':, 'c':0, 'd':0, 'e':, 'f':0}
+ard_sensors = {util._ard:True, util._hum:'', util._temp:''}
+wh_items    = {util._wh:True, 'a':0, 'b':0, 'c':0, 'd':0, 'e':0, 'f':0}
 ev3_status  = {util._ev3_s:True, util._stat:'', util._pos:''}
 
 def display_title_bar():
