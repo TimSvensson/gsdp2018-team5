@@ -1,8 +1,19 @@
 import os, sys
+
+cu_path = os.path.dirname(os.path.abspath(__file__)) + '/../client-server'
+print(cu_path)
+sys.path.insert(0, cu_path)
+
+import util, client
 #!/usr/bin/python
 # -*- coding: unicode -*-
 
+# con - the CONnection to the server
+con = None
 
+ard_sensors = {}
+wh_items    = {}
+ev3_status  = {}
 
 def display_title_bar():
 
@@ -43,13 +54,14 @@ def is_job_done(src, dst):
 
 def display_ware():
 
-    print("\n     In") 
+    print("\n")
+    print("      In {}".format(wh_items['e']))
     print("++++++|+++++++")
-    print("+A----|-----B+")
+    print("+{}A---|----B{}+".format(wh_items['a'], wh_items['b']))
     print("++++++|+++++++")
-    print("+C----|-----D+")
+    print("+{}C---|----D{}+".format(wh_items['c'], wh_items['d']))
     print("++++++|++++++")
-    print("     Out")
+    print("     Out {}".format(wh_items['f']))
 
 
 def create_menu():
@@ -63,7 +75,9 @@ def create_menu():
     source = ''
     destination = ''
 
-    while choice != "q":    
+    while choice != "q":
+
+        update()
 
     # Let users know what they can do.
         print("\n[1] GET FROM: " + source.upper())
@@ -107,7 +121,9 @@ def ware_menu():
     temp = ''
     hum = ''
 
-    while choice != "q":    
+    while choice != "q":
+
+        update()
 
     # Let users know what they can do.
         print("\n[1] Show a map of the Warehouse")
@@ -123,11 +139,11 @@ def ware_menu():
             
         elif choice == '2':
             print("\nHere we will present the sensor data of Humidity and Temperature")
-            print("Temperature: " + temp)
-            print("Humidity : " + hum)
+            print("Temperature: " + ard_sensors[util._temp])
+            print("Humidity : " + ard_sensors[util._hum])
             
         elif choice == '3':
-            print("\nLocation of the robot atm")
+            print("\nLocation {]".format(ev3_status[util._pos]))
         elif choice == 'q':
             main_menu()
         else:
@@ -139,9 +155,11 @@ def main_menu():
     display_title_bar()
     choice = ''
 
-    while choice != "q":    
+    while choice != "q":
 
-    # Let users know what they can do.
+        update()
+
+        # Let users know what they can do.
         print("\n[1] Inspect the Warehouse")
         print("[2] Create a job")
         print("[q] Quit")
@@ -160,5 +178,23 @@ def main_menu():
             print("\nI didn't understand that choice.\n")
 
 
+def update():
+    recipient = util._db
+    db_fetch = {util._db_f: True} #database fetch
+    con.send(recipient, db_fetch)
+    resp = con.read()
 
-main_menu()
+    if util._ev3_s in resp:
+        ev3_status = resp[_ev3_s]
+    if util._wh in resp:
+        wh_items = resp[util._wh]
+    if util._ard in resp:
+        ard_sensors = resp[_ard]
+
+if __name__ == '__main__':
+    HOST, PORT = sys.argv[1], int(sys.argv[2])
+    con = client.client(HOST,PORT,util._ui)
+    con.connect()
+    main_menu()
+    con.disconnect()
+
