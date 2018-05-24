@@ -20,7 +20,7 @@ _to_ui  = 'to_ui'
 _to_ev3 = 'to_ev3'
 _to_ard = 'to_arduino'
 
-# Different types of clients
+# Different types of requests/clients
 _test   = 'test'
 _db     = 'database'
 _ev3_s  = 'ev3_status'

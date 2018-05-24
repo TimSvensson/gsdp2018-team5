@@ -7,6 +7,8 @@ import util
 import socket
 import struct
 
+DEBUG = False
+
 queue_lock = threading.Lock()
 msg_q = []
 
@@ -19,7 +21,8 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
             threading.current_thread().getName(), self.client_address))
 
     def handle(self):
-        while 1:
+        self.loop = True
+        while self.loop:
             self.to_queue()
             print("{} q_pos {} len queue {}".format(
                 threading.current_thread().getName(), self.q_pos, len(msg_q)))
@@ -30,28 +33,31 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
 
     def to_queue(self):
-        s = str(util.recv_msg(self.request), 'utf-8')
-        print(s)
-        msg = json.loads(s)
-        print(msg)
+        try:
+            s = str(util.recv_msg(self.request), 'utf-8')
+            print(s)
+            msg = json.loads(s)
+            print(msg)
 
-        if util._pop in msg:
-            print("_pop")
-            self.from_queue()
+            if util._pop in msg:
+                print("_pop")
+                self.from_queue()
 
-        elif util._push in msg:
-            print("_push")
-            
-            if msg[util._rec] == util._to_srv:
-                print("_to_srv")
-                if util._type in msg:
-                    print("_type")
-                    self.type = msg[util._type]
+            elif util._push in msg:
+                print("_push")
+                
+                if msg[util._rec] == util._to_srv:
+                    print("_to_srv")
+                    if util._type in msg:
+                        print("_type")
+                        self.type = msg[util._type]
+                else:
+                    with queue_lock:
+                        msg_q.append(msg)
             else:
-                with queue_lock:
-                    msg_q.append(msg)
-        else:
-            print("else")
+                print("else")
+        except:
+            self.loop = False
             
     def from_queue(self):
         with queue_lock:

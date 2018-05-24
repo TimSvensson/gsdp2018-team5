@@ -3,6 +3,8 @@ import util
 import json
 import sys
 
+DEBUG = False
+
 class client():
     def __init__(self, host, port, type):
         self.server = host, port
@@ -23,7 +25,7 @@ class client():
     # push / pop :: server / client
     def __push(self, dct):
         s = str(json.dumps(dct))
-        print(s)
+        if DEBUG: print(s)
         util.send_msg(self.sock, (bytes(s, 'utf-8')))
 
     # recv: recv, _push: true, _cont: cont
@@ -79,6 +81,9 @@ if __name__ == "__main__":
                     print("EOQ")
                 elif util._msg in from_serv:
                     print(from_serv[util._msg])
+
+            elif (inp == 'q'):
+                break
 
             else:
                 msg = {util._msg: inp}
