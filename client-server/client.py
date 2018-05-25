@@ -38,9 +38,11 @@ class client():
     def read(self):
         pop = {util._rec: util._to_srv, util._pop: True}
         self.__push(pop)
-        return json.loads(str(util.recv_msg(self.sock), 'utf-8'))
-
-
+        b = util.recv_msg(self.sock)
+        if b:
+            return json.loads(str(b), 'utf-8')
+        else:
+            return {}
 
 t_ard1 = util.ard_to_dct(1,2)
 t_ard2 = util.ard_to_dct(15,12)
