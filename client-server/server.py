@@ -17,8 +17,8 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     def setup(self):
         self.q_pos = 0
         self.type = None
-        print("{} :: {} connected".format(
-            threading.current_thread().getName(), self.client_address))
+#        print("{} :: {} connected".format(
+#            threading.current_thread().getName(), self.client_address))
 
     def handle(self):
         self.loop = True
@@ -35,9 +35,8 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     def to_queue(self):
         try:
             s = str(util.recv_msg(self.request), 'utf-8')
-            print(s)
             msg = json.loads(s)
-            print(msg)
+            print("read {} {} {}".format(threadding.current_thread().getName(), self.type,msg))
 
             if util._pop in msg:
                 print("_pop")
@@ -66,19 +65,20 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
             while msg == '':
                 if self.q_pos < len(msg_q):
                     if self.type == msg_q[self.q_pos][util._rec] or msg_q[self.q_pos][util._rec] == util._to_all:
-                        print("{} sending msg".format(threading.current_thread().getName()))
+#                       print("{} sending msg".format(threading.current_thread().getName()))
                         msg = {util._msg: msg_q[self.q_pos]}
                     self.q_pos += 1
 
                 else:
-                    print("{} sending empty".format(threading.current_thread().getName()))
+#                    print("{} sending empty".format(threading.current_thread().getName()))
                     msg = {util._empty: True}
 
             print(msg)
             self.send(json.dumps(msg))
 
     def send(self, msg):
-        util.send_msg(self.request, bytes(msg, 'utf-8'))
+        print("send {} {} {}".format(threadding.current_thread().getName(), self.type, msg))
+        util.send_msg(self.request, bytes(str(msg), 'utf-8'))
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
